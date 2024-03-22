@@ -262,6 +262,9 @@ section {
   .list-item {
     margin-bottom: 16px;
   }
+  .list-item:nth-child(even) {
+    order: 1;
+  }
   .list-circle {
     width: 50.4px;
     height: 50.4px;
