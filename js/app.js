@@ -1,4 +1,8 @@
 $(document).ready(function () {
+  //initialize constant values for loader
+  const loaderImg = '<img src="img/loading_spinner.gif" height="100" width="100" alt="loader"/><h5>Please wait a moment...</h5>';
+  const loaderBody = document.getElementById('loader');
+  const documentBody = document.querySelector('body');
 
   $("#btn-search").on("click", function (e) {
     e.preventDefault();
@@ -14,15 +18,19 @@ $(document).ready(function () {
     }
 
     if (x === true) {
+      loaderBody.innerHTML = loaderImg;
+      documentBody.classList.add("loading");
       document.querySelector('input[type="text"]').parentNode.classList.remove("error");
       const proxyurl = "";
       const url =
-        'https://ltv-data-api.herokuapp.com/api/v1/records.json?email=' + email;
+        'https://ltvdataapi.devltv.co/api/v1/records?email=' + email; //new updated API value
       fetch(proxyurl + url)
         .then((response) => response.text())
         .then(function (contents) {
           localStorage.setItem("userObject", contents);
           window.location.href = "result.html";
+          loaderBody.innerHTML = '';
+          documentBody.classList.remove("loading");
         })
         .catch((e) => console.log(e));
     } else if (x !== true) {
@@ -52,14 +60,18 @@ $(document).ready(function () {
 
 
       if (x === true) {
+        loaderBody.innerHTML = loaderImg;
+        documentBody.classList.add("loading");
         const proxyurl = "";
         const url =
-          'https://ltv-data-api.herokuapp.com/api/v1/records.json?email=' + email;
+          'https://ltvdataapi.devltv.co/api/v1/records?email=' + email; //new updated API value
         fetch(proxyurl + url)
           .then((response) => response.text())
           .then(function (contents) {
             localStorage.setItem("userObject", contents);
             window.location.href = "result.html";
+            loaderBody.innerHTML = '';
+            documentBody.classList.remove("loading");
           })
           .catch((e) => console.log(e));
       } else if (x !== true) {

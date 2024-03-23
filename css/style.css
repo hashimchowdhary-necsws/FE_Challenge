@@ -3,6 +3,7 @@
 --------------------------------------------------------
 --| General
 --| Navbar
+--| Loader
 --| Search Form
 --| [SECTION] Above the Fold 
 --| [SECTION] Features
@@ -94,6 +95,37 @@ section {
 
 .navbar {
   padding: 20px 16px;
+}
+
+/* ************************************************************
+***************************************************************
+--- Loader ---
+***************************************************************
+************************************************************ */
+
+#loader {   
+  width: 100%;  
+  height: 100%;  
+  z-index: 9999;  
+  background-color: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#loader img { 
+  height: 110px;
+  width: auto;
+  margin-bottom: 15px;
+} 
+
+body.loading {
+  height: calc(100vh - 150px);
+}
+
+body.loading section{
+  display: none;
 }
 
 /* ************************************************************
