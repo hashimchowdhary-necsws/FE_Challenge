@@ -70,12 +70,28 @@
           <h1 class="mb-3">Can't Find The Right Person?</h1>
           <h2 class="mb-4 mb-md-5"><strong>Try Again</strong> - Make a new search</h2>
         </div>
+        <div class="text-uppercase text-white mb-2 mb-md-3 d-flex align-items-center justify-content-center justify-content-sm-start">
+          <p class="mb-0 d-sm-block d-none">Type of Search:</p>
+          <button type="button" class="btn btn-filter-search active mx-2 mb-sm-1 mb-3" data-value="email-search">Email Address</button>
+          <button type="button" class="btn btn-filter-search mx-2 mb-sm-1 mb-3" data-value="phone-search">Phone Number</button>
+        </div>
+        
         <form>
-          <div class="input-group">
-            <input class="form-control" type="text" name="email" placeholder="Enter an Email Address" />
+          <!--email search block start-->
+          <div class="input-group email-search">
+            <input class="form-control email" type="text" name="email" placeholder="Enter an Email Address" />
             <p class="error-msg">Please enter a valid email address</p>
             <button id="btn-search" class="btn btn-form-submit text-uppercase" type="submit">Go!</button>
           </div>
+          <!--email search block start-->
+
+          <!--phone search block start-->
+          <div class="input-group phone-search display-none">
+            <input class="form-control phone" type="text" name="phone" maxlength="10" placeholder="Enter a Phone Number" />
+            <p class="error-msg">Please enter a valid phone number</p>
+            <button id="btn-phone-search" class="btn btn-form-submit text-uppercase" type="submit">Go!</button>
+          </div>
+          <!--phone search block end-->
         </form>
       </div>
     </section>
