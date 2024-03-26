@@ -269,10 +269,6 @@ body.loading section{
   border-top: 8px solid #ffc107;
 }
 
-.display-none {
-  display: none !important;
-}
-
 @media(max-width: 355px) {
   .btn-filter-search {
     padding: 5px 8px;

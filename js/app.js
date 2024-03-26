@@ -1,4 +1,4 @@
-$(document).ready(function () {
+jQuery(function ($) {
   //initialize constant values for loader
   const loaderImg = '<img src="img/loading_spinner.gif" height="100" width="100" alt="loader"/><h5>Please wait a moment...</h5>';
   const loaderBody = document.getElementById('loader');
@@ -6,164 +6,111 @@ $(document).ready(function () {
   //initialize constant values for inputs
   const emailField = document.querySelector('input[type="text"][name="email"]');
   const phoneField = document.querySelector('input[type="text"][name="phone"]');
+  //regular expression for email and phone
+  const regExEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const regExPhone = /^\d{10}$/;
 
-  $("#btn-search").on("click", function (e) {
-    e.preventDefault();
-    localStorage.clear(); //Clears storage for next request
-    email = $('input[type="text"][name="email"]').val().toLowerCase();
+  function fetchData(searchType, searchValue){ 
+    loaderBody.innerHTML = loaderImg;
+    documentBody.classList.add('loading');
+    const searchInput = searchType == 'email' ? emailField : phoneField;
+    searchInput.parentNode.classList.remove('error');
+    /**
+       * makes a request to ltv API to search an specific email address and phone number.
+       * if there's a response, it gets stored in the local storage and redirects to results page
+    */
+    const url =
+      `https://ltvdataapi.devltv.co/api/v1/records?${searchType}=${searchValue}`;
+    fetch(url)
+      .then((response) => response.text())
+      .then(function (contents) {
+        localStorage.setItem("userObject", contents);
+        window.location.href = "result.html";
+        loaderBody.innerHTML = '';
+        documentBody.classList.remove('loading');
+      })
+      .catch((e) => console.log(e));
+  }
 
-    var x, y;
-    regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    if (email.match(regEx)) {
-      x = true;
+  function emailValidate(){
+    let emailAdress = $('input[type="text"][name="email"]').val().toLowerCase();
+    if (emailAdress.match(regExEmail)) {
+      let inputType = 'email';
+      fetchData(inputType, emailAdress);
     } else {
-      x = false;
+      emailField.parentNode.classList.add('error');
     }
+  }
 
-    if (x === true) {
-      loaderBody.innerHTML = loaderImg;
-      documentBody.classList.add("loading");
-      emailField.parentNode.classList.remove("error");
-      const proxyurl = "";
-      const url =
-        'https://ltvdataapi.devltv.co/api/v1/records?email=' + email; //new updated API value
-      fetch(proxyurl + url)
-        .then((response) => response.text())
-        .then(function (contents) {
-          localStorage.setItem("userObject", contents);
-          window.location.href = "result.html";
-          loaderBody.innerHTML = '';
-          documentBody.classList.remove("loading");
-        })
-        .catch((e) => console.log(e));
-    } else if (x !== true) {
-      document.querySelector('input[type="text"]').parentNode.classList.add("error");
+  function phoneValidate(){
+    let phoneNumber = $('input[type="text"][name="phone"]').val();
+    if (phoneNumber.match(regExPhone)) {
+      let inputType = 'phone';
+      fetchData(inputType, phoneNumber);
+    } else {
+      phoneField.parentNode.classList.add('error');
     }
+   }
+  
+  /**
+   * button search validation for email address.
+  */
+  $("#btn-email-search").on("click", function (e) {
+    e.preventDefault();
+    localStorage.clear(); //clears storage for next request
+    emailValidate();
   });
 
-  $('input[type="text"]').keyup(function (event) {
-    //email input value and reqularExpression
-    email = $('input[type="text"][name="email"]').val().toLowerCase();
-    regExEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  /**
+   * search and validate on keyup and enter key.
+  */
+  $('input[type="text"]').keyup(function (e) { 
+    let emailAdress = $('input[type="text"][name="email"]').val().toLowerCase();
 
-    //phone input value and reqularExpression
-    phone_number = $('input[type="text"][name="phone"]').val();
-    regExPhone = /^\d{10}$/;
+    let phoneNumber = $('input[type="text"][name="phone"]').val();
 
-    if (email.match(regExEmail) || phone_number.match(regExPhone)) {
-      x = true;
-      this.parentNode.classList.remove("error");
-    } else {
-      x = false;
+    if (emailAdress.match(regExEmail) || phoneNumber.match(regExPhone)) {
+      this.parentNode.classList.remove('error');
     }
-    keycode = (event.keyCode ? event.keyCode : event.which);
-    if (keycode == '13') {
-      /**
-       * Makes a request to ltv API to search an specific email address.
-       * If there's a response, it gets stored in the local storage and redirects to results page
-       */
-      event.preventDefault();
-      localStorage.clear(); //Clears storage for next request
 
-      var x, y;
-
-
-      if (x === true) {
-        loaderBody.innerHTML = loaderImg;
-        documentBody.classList.add("loading");
-        const proxyurl = "";
-
-        //if email is valid
-        if (email.match(regExEmail)) {
-          const url =
-          'https://ltvdataapi.devltv.co/api/v1/records?email=' + email; //new updated API value
-          fetch(proxyurl + url)
-          .then((response) => response.text())
-          .then(function (contents) {
-            localStorage.setItem("userObject", contents);
-            window.location.href = "result.html";
-            loaderBody.innerHTML = '';
-            documentBody.classList.remove("loading");
-          })
-          .catch((e) => console.log(e));
-        }
-        
-        //if phone mumber is valid
-        if (phone_number.match(regExPhone)) {
-          const url =
-          'https://ltvdataapi.devltv.co/api/v1/records?phone=' + phone_number; //new updated API value
-          fetch(proxyurl + url)
-          .then((response) => response.text())
-          .then(function (contents) {
-            localStorage.setItem("userObject", contents);
-            window.location.href = "result.html";
-            loaderBody.innerHTML = '';
-            documentBody.classList.remove("loading");
-          })
-          .catch((e) => console.log(e));
-        }
-
-      } else if (x !== true) {
-        this.parentNode.classList.add("error");
-      }
+    keycode = (e.keyCode ? e.keyCode : e.which);
+    if (keycode == '13') { //on press of enter key
+      e.preventDefault();
+      localStorage.clear(); //clears storage for next request
+      
+      emailValidate();
+      phoneValidate();
+      
     }
   });
 
   /**
    * button search validation for phone number.
-  */
+  */ 
   $("#btn-phone-search").on("click", function (e) {
     e.preventDefault();
-    localStorage.clear(); //Clears storage for next request
-    phone_number = $('input[type="text"][name="phone"]').val();
-
-    var x, y;
-
-    regEx = /^\d{10}$/;
-    if (phone_number.match(regEx)) {
-      x = true;
-    } else {
-      x = false;
-    }
-
-    if (x === true) {
-      loaderBody.innerHTML = loaderImg;
-      documentBody.classList.add("loading");
-      phoneField.parentNode.classList.remove("error");
-      const proxyurl = "";
-        const url =
-        'https://ltvdataapi.devltv.co/api/v1/records?phone=' + phone_number; //new updated API value
-      fetch(proxyurl + url)
-        .then((response) => response.text())
-        .then(function (contents) {
-          localStorage.setItem("userObject", contents);
-          window.location.href = "result.html";
-          loaderBody.innerHTML = '';
-          documentBody.classList.remove("loading");
-        })
-        .catch((e) => console.log(e));
-    } else if (x !== true) {
-      phoneField.parentNode.classList.add("error");
-    }
+    localStorage.clear(); //clears storage for next request
+    phoneValidate();
   });
 
   /**
    * Tab button for Email search and Phone search.
   */
   $(".btn-filter-search").on("click", function (e) {
-    $(".btn-filter-search").removeClass('active'); //remove class active
-    $(this).addClass('active'); //add class active on current
-    $('input[type="text"]').val(''); //clear input values
-
-    //get the attribute value of button to compare its related to email or phone
-    var attrClass = $(this).attr('data-value'); 
+    const searchTabs = document.querySelectorAll('.btn-filter-search');
+    searchTabs.forEach((element) => {
+      element.classList.remove('active');
+    });
+    $('input[type="text"]').val('');
+    this.classList.add('active'); 
+    let attrClass = this.getAttribute('data-search'); 
 
     if (attrClass == 'email-search') {
-      $(".email-search").removeClass('display-none');
-      $(".phone-search").addClass('display-none');
+      document.querySelector('.email-search').classList.remove('d-none');
+      document.querySelector('.phone-search').classList.add("d-none");
     } else {
-      $(".email-search").addClass('display-none');
-      $(".phone-search").removeClass('display-none');
+      document.querySelector('.phone-search').classList.remove("d-none");
+      document.querySelector('.email-search').classList.add("d-none");
     }
   });
 
